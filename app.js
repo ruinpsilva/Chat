@@ -3,7 +3,8 @@
 //enabling CORS functionality (cross-origin resource sharing)
 var cors = require('cors');
 
-
+//setting the variable for the path
+var path = require('path');
 
 
 
@@ -20,7 +21,7 @@ var express = require('express'),
 
 
 //here we add to the path of all the static content
-//app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 server.listen(3000);
 
