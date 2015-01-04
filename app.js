@@ -13,7 +13,9 @@ var express = require('express'),
     server = require('http').createServer(app),
     //creating the socket funcionality
         //socket.io listens to any http server object
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    //add mongoose to the server
+    mongoose = require('mongoose'),
     //object to handle the users
     users = {};
 
@@ -27,6 +29,25 @@ server.listen(3000);
 
  app.use(cors());   //tell the app to use CORS
 
+//here we make the connection to the mongoDB (note: the chat DB don't exist for the first time, mongoDB will create theBD chat)
+mongoose.connect('mongodb://localhost/chat', function(err){
+   if(err){
+       console.log(err);
+   } else {
+       console.log("Connection to MongoDB OK!");
+   }
+});
+
+//we must create a schema just like JSON style
+var chatSchema = mongoose.Schema({
+    nick: String,
+    msg: String,
+    created: {type: Date, default: Date.now}
+});
+
+//we must create a model
+var Chat = mongoose.model('Message', chatSchema);
+
 
 //create a route
     //parameters req -> request, res -> response
@@ -38,6 +59,15 @@ app.get('/', function(req, res){
 //place the socket funcionality in the server side
 
 io.sockets.on('connection', function(socket){
+    //every time a new user connects we must show the messages already typed
+    var query = Chat.find({});
+    //limit the amount of messages by 15 and sorted the messages by the time created in a descending possition
+    query.sort('-created').limit(15).exec(function(err, docs){
+        if(err) throw err;
+        console.log('sending old messages');
+        socket.emit('load old msgs', docs);
+    });
+
     //callback is used because we are sending data back to the client throug this function
     socket.on('new user', function(data, callback){
        //checking if the new username is already in our array
@@ -76,12 +106,16 @@ io.sockets.on('connection', function(socket){
             }
 
         } else {
-            //the message should go to all the users
-            io.sockets.emit('new message', {msg: msg, nick: socket.nickname});//by adding the nickname variable to the socket makes it easy to call it if necessary
-            //sends the message to all the users beside the one who send it
-            //socket.broadcast.emit('new message', data);
+            //WARNING: private messages will not be store in DB
+            var newMsg = new Chat({msg: msg, nick: socket.nickname});
+            newMsg.save(function(err){
+                if(err) throw err;
+                //the message should go to all the users
+                io.sockets.emit('new message', {msg: msg, nick: socket.nickname});//by adding the nickname variable to the socket makes it easy to call it if necessary
+                //sends the message to all the users beside the one who send it
+                //socket.broadcast.emit('new message', data);
+            });
         }
-
    });
 
 

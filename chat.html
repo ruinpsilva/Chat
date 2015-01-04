@@ -63,7 +63,7 @@
                 socket.on('usernames', function(data){
                    var html = '';
                     //going trough the array
-                    for(i=0; i < data.length; i++){
+                    for(var i=0; i < data.length; i++){
                         html += data[i] + "<br/>"
                     }
                     $users.html(html);
@@ -78,10 +78,23 @@
                     $messageBox.val(''); //to clean the message box
                 });
 
+                //here we are going to show the messages already present
+                socket.on('load old msgs', function(docs){
+                    //docs are like an array of every message received and we must go through it
+                    for(var i=docs.length-1; i >= 0; i--){
+                        displayMsg(docs[i]);
+                    }
+                });
+
                 socket.on('new message', function(data){
                    //time to display the message
-                    $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
+                    displayMsg(data);
                 });
+
+                //function to display the messages (used in old messages and the new ones)
+                function displayMsg(data){
+                    $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
+                }
 
                 //time to display the private message
                 socket.on('whisper', function(data){
