@@ -104,3 +104,12 @@ input{
     color: #f7f7f7 !important;
 }
 
+.error{
+    color: red;
+}
+
+.whisper{
+    color: green;
+    font-style: italic;
+}
+
