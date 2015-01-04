@@ -42,11 +42,13 @@ mongoose.connect('mongodb://localhost/chat', function(err){
 var chatSchema = mongoose.Schema({
     nick: String,
     msg: String,
-    created: {type: Date, default: Date.now}
+    //I have configured the messages to be deleted 8h (28800s) after being created
+    created: {type: Date, expires: 28800, default: Date.now}
 });
 
 //we must create a model
 var Chat = mongoose.model('Message', chatSchema);
+
 
 
 //create a route
