@@ -50,17 +50,19 @@ var chatSchema = mongoose.Schema({
 var Chat = mongoose.model('Message', chatSchema);
 
 
-
+var u;
 //create a route
     //parameters req -> request, res -> response
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/chat.html');
+    u = req.query.u;
 });
 
 //to receive the event on the server side
 //place the socket funcionality in the server side
 
 io.sockets.on('connection', function(socket){
+    console.log(u);
     //every time a new user connects we must show the messages already typed
     var query = Chat.find({});
     //limit the amount of messages by 15 and sorted the messages by the time created in a descending possition
