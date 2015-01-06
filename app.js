@@ -79,7 +79,7 @@ io.sockets.on('connection', function(socket){
             callback(false); //this means that the username is in the array
         } else {
             callback(true);
-            socket.nickname = data; //storing the nickname in the socket
+            socket.nickname = u; //storing the nickname in the socket
             users[socket.nickname] = socket;
             updatesNicknames();
         }
