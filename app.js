@@ -85,6 +85,7 @@ io.sockets.on('connection', function(socket){
         }
     });
 
+
     function updatesNicknames(){
         io.sockets.emit('usernames', Object.keys(users));//for all the users update their list of nicknames
     }
