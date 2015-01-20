@@ -4,12 +4,11 @@ body{
     background: #3C3F41;
     border: 1px #f7f7f7 solid;
 /*    border-radius: 5px;*/
-    height: 500px;
+    height: 550px;
     width: 278px;
     color:#f7f7f7;
     padding-left: 15px;
 /*    padding-top: 15px;*/
-    -webkit-user-select: none;
 }
 
 h1{
@@ -42,7 +41,7 @@ h2{
 #contentWrap{
     background: #3C3F41;
     display: none;
-    font-size: 12px;
+    font-size: 11px;
 
 }
 #chatWrap{
@@ -59,7 +58,7 @@ h2{
 }
 
 #nickWrap p{
-    padding-left: 15px;
+    padding-left: 8px;
     color:#f7f7f7;
 }
 
@@ -140,7 +139,7 @@ input{
 
 /* Let's get this party started */
 ::-webkit-scrollbar {
-/*    -webkit-overflow-scrolling: touch;*/
+    -webkit-overflow-scrolling: touch;
     width: 5px;
 }
 

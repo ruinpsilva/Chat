@@ -19,8 +19,8 @@
             <div id="chatWrap">
                 <div id="chat"></div>
                 <form id="send-message">
-                    <input size="23" id="message"></input>
-                    <input type="submit" value="Send"></input>
+                    <input id="message" style="width: 215px; height: 23px"></input>
+<!--                    <input type="submit" value="Send"></input>-->
                 </form>
             </div>
             <p><b>Who's In!</b></p>
@@ -57,20 +57,28 @@
                 //adding list of users
                 socket.on('usernames', function(data){
                    var html = '';
+                    var usersList = data;
+                    var usertemp;
                     //going trough the array
-                    for(var i=0; i < data.length; i++){
-                        html += data[i] + "<br/>"
+                    for(var i=0; i < usersList.length; i++){
+                        //if the username is to big to fit we cut it and add some ".."
+                        if(usersList[i].length > 6){
+                            usertemp = usersList[i];
+                            usertemp = usertemp.slice(0,6);
+                            usersList[i] = usertemp;
+                            usersList[i] = usersList[i] + '..';
+                        }
+                        html += usersList[i] + "<br/>"
                     }
                     $users.html(html);
                 });
 
                 //functionality that send the message to the server
-                $messageForm.submit(function(e){
-                    e.preventDefault();
+                $messageForm.submit(function(event){
+                    event.preventDefault();
                     socket.emit('send message', $messageBox.val(), function(data){
                         $chat.append('<span error="msg">' + data + "<br/>");
-                        document.body.scrollTop(455);
-                        //document.getElementById("chat").scrollTop(455);
+                        document.getElementById("chat").scrollTop(430);
                         //document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
                     });
                     $messageBox.val(''); //to clean the message box
@@ -92,7 +100,7 @@
 
                 //function to display the messages (used in old messages and the new ones)
                 function displayMsg(data){
-                    if((data.nick + ': ' + data.msg).length < 26){
+                    if((data.nick + ': ' + data.msg).length < 26 && data.msg.length > 0){
                         $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
                     } else {
                         var message = '<b>' + data.nick + ': </b>' + data.msg + '<br/>';
@@ -102,15 +110,26 @@
                             var spcCheck = message.slice(0,26);
                             //then we find the last "space" on it
                             var spcPlace = spcCheck.lastIndexOf(" ");
-                            //then we cut it in that place
-                            var smalMsg = spcCheck.slice(0,spcPlace);
+                            //then we cut it
+                            if(spcPlace == 0){
+                                //if there is no space on the phrase
+                                var smallMsg = spcCheck.slice(0,25);
+                            } else {
+                                //then we cut it in that place
+                                var smallMsg = spcCheck.slice(0,spcPlace);
+                            }
                             //we place it in the chat
-                            $chat.append(smalMsg);
+                            $chat.append(smallMsg);
                             //the message now starts were it was cuted
-                            message = message.substr(spcPlace,message.length);
+                            if(spcPlace != -1){
+                                message = message.substr(spcPlace,message.length);
+                            } else {
+                                //message = message.substr(25,message.length);
+                            }
+
                         }
                         //for last we place the remaing of the message
-                        if(message.length < 26){
+                        if(message.length < 26 && data.msg.length > 0){
                             $chat.append(message);
                         }
 
