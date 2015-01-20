@@ -19,9 +19,11 @@
             <div id="chatWrap">
                 <div id="chat"></div>
                 <form id="send-message">
-                    <input id="message" style="width: 215px; height: 23px"></input>
+                    <input id="message" wrap="off" placeholder="type your message here!"></input>
 <!--                    <input type="submit" value="Send"></input>-->
                 </form>
+                <input id="btnProfile" type="submit" href="localhost:8081/P3/Chat/perfil.php" value="Profile"/>
+                <input id="btnLogout" type="submit" href="localhost:8081/P3/Chat/logout.php" value="Logout"/>
             </div>
             <p><b>Who's In!</b></p>
             <div id="users"></div>
@@ -41,6 +43,7 @@
                 var $messageForm = $('#send-message');
                 var $messageBox = $('#message');
                 var $chat = $('#chat');
+
 
 
                 //emits the socket
@@ -81,6 +84,7 @@
                     });
                     //alert(document.getElementById('chat').scrollHeight);
                     $messageBox.val(''); //to clean the message box
+                    //to make the scrollbar go down when a new message appears
                     document.getElementById("chat").scrollTop(document.getElementById("chat").scrollHeight);
                 });
 

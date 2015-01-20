@@ -99,7 +99,7 @@ input{
 }
 
 #send-message{
-    padding-left: 5px;
+    padding-left: 0px;
     size: 25px;
 }
 
@@ -118,7 +118,11 @@ input{
 }
 
 #message{
+    padding-left: 0px;
     size: 25px;
+    height: 23px;
+    width: 230px;
+    overflow: hidden;
 }
 
 #title{
@@ -159,6 +163,14 @@ input{
 }
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: #f7f7f7;
+}
+
+#btnProfile{
+    float: left;
+}
+
+#btnLogout{
+    float: right;
 }
 
 
