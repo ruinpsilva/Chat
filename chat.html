@@ -77,11 +77,11 @@
                 $messageForm.submit(function(event){
                     event.preventDefault();
                     socket.emit('send message', $messageBox.val(), function(data){
-                        $chat.append('<span error="msg">' + data + "<br/>");
-                        document.getElementById("chat").scrollTop(430);
-                        //document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+                        $chat.append('<span error="msg">' + data + "<br/>");;
                     });
+                    //alert(document.getElementById('chat').scrollHeight);
                     $messageBox.val(''); //to clean the message box
+                    document.getElementById("chat").scrollTop(document.getElementById("chat").scrollHeight);
                 });
 
                 //here we are going to show the messages already present
