@@ -18,12 +18,11 @@
             <h3 id="title">A.M.A.L.I.A. Chat</h3>
             <div id="chatWrap">
                 <div id="chat"></div>
-                <form id="send-message">
-                    <input id="message" wrap="off" placeholder="type your message here!"></input>
-<!--                    <input type="submit" value="Send"></input>-->
-                </form>
-                <input id="btnProfile" type="submit" href="localhost:8081/P3/Chat/perfil.php" value="Profile"/>
-                <input id="btnLogout" type="submit" href="localhost:8081/P3/Chat/logout.php" value="Logout"/>
+                    <form id="send-message">
+                        <input id="message" wrap="off" placeholder="type your message here!"></input>
+                    </form>
+                    <input id="btnProfile" type="button" onclick="window.location.href='localhost:8081/P3/Chat/perfil.php'" value="Profile"/>
+                    <input id="btnLogout" type="button" onclick="window.location.href='localhost:8081/P3/Chat/logout.php'" value="Logout"/>
             </div>
             <p><b>Who's In!</b></p>
             <div id="users"></div>
@@ -85,7 +84,8 @@
                     //alert(document.getElementById('chat').scrollHeight);
                     $messageBox.val(''); //to clean the message box
                     //to make the scrollbar go down when a new message appears
-                    document.getElementById("chat").scrollTop(document.getElementById("chat").scrollHeight);
+                    var scrollbarPlace = document.getElementById('chat').scrollHeight;
+                    document.getElementById("chat").scrollTop(scrollbarPlace);
                 });
 
                 //here we are going to show the messages already present
@@ -107,33 +107,39 @@
                     if((data.nick + ': ' + data.msg).length < 26 && data.msg.length > 0){
                         $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
                     } else {
-                        var message = '<b>' + data.nick + ': </b>' + data.msg + '<br/>';
+                        var message = '<b>' + data.nick + ':</b>' + data.msg + '<br/>';
 
                         while (message.length >= 26){
+                            message = message.trim();
                             //first we slice the message in a 26 letter phrase
                             var spcCheck = message.slice(0,26);
                             //then we find the last "space" on it
                             var spcPlace = spcCheck.lastIndexOf(" ");
                             //then we cut it
-                            if(spcPlace == 0){
+                            //$chat.append(spcCheck.length);
+                            if(spcPlace == -1){
                                 //if there is no space on the phrase
-                                var smallMsg = spcCheck.slice(0,25);
+                                //$chat.append("!");
+                                var smallMsg = spcCheck.slice(0,26);
+                                //var smallMsg = smallMsg + "</br>";
                             } else {
                                 //then we cut it in that place
                                 var smallMsg = spcCheck.slice(0,spcPlace);
                             }
                             //we place it in the chat
-                            $chat.append(smallMsg);
+                            $chat.append(smallMsg + '</br>');
                             //the message now starts were it was cuted
                             if(spcPlace != -1){
-                                message = message.substr(spcPlace,message.length);
+                                message = message.substr(spcPlace);
                             } else {
-                                //message = message.substr(25,message.length);
+                                message = message.substr(26);
                             }
 
                         }
                         //for last we place the remaing of the message
                         if(message.length < 26 && data.msg.length > 0){
+                            //$chat.append("LASTMSG");
+                            //$chat.append('</br>');
                             $chat.append(message);
                         }
 
