@@ -1,3 +1,4 @@
+
 <html>
     <head>
         <title>A.M.A.L.I.A. CHAT</title>
@@ -10,20 +11,23 @@
     <body>
         <div id="nickWrap">
             <h1>Welcome to the Amalia Chat</h1>
-            <p>Please wait...</p>
+            <p>Enter a nickname to chat:</p>
+            <p id="nickError"></p>
+            <form id="setNick">
+                <input size="25" id="nickname"></input>
+                <input type="submit" value = "Enter"></input>
+            </form>
         </div>
 
         <div id="contentWrap">
-            <h3 id="title">A.M.A.L.I.A. Chat</h3>
+           <h3 id="title">A.M.A.L.I.A. Chat</h3>
             <div id="chatWrap">
                 <div id="chat"></div>
-                    <form id="send-message">
+                 <form id="send-message">
                         <input id="message" wrap="off" placeholder="type your message here!"></input>
                     </form>
-                    <input id="btnProfile" type="button" onclick="window.location.href='http://localhost:8081/P3/Chat/perfil.php'" value="Profile"/>
-                    <input id="btnLogout" type="button" onclick="window.location.href='http://localhost:8081/P3/Chat/logout.php'" value="Logout"/>
             </div>
-            <p><b>Who's In!</b></p>
+			<p><b>Who's In!</b></p>
             <div id="users"></div>
         </div>
 
@@ -36,24 +40,25 @@
                 var socket = io.connect();
                 var $nickForm = $('#setNick');
                 var $nickError = $('#nickError');
-                var $nickBox = $('username');
+                var $nickBox = $('#nickname');
                 var $users = $('#users');
                 var $messageForm = $('#send-message');
                 var $messageBox = $('#message');
                 var $chat = $('#chat');
 
-
-
-                //emits the socket
-                socket.emit('new user', $nickBox.val(), function(data){
-                    if(data){
-                        $('#contentWrap').show(); //we show the chat div
-                        $('#nickWrap').hide(); //we hide the nickname input div
-                    } else {
-                        $nickError.html('Error please try to login again!');
-                    }
+                //event handler to the form, when the user submits the nickname
+                $nickForm.submit(function(e){
+                    e.preventDefault();
+                    socket.emit('new user', $nickBox.val(), function(data){
+                        if(data){
+                            $('#contentWrap').show(); //we show the chat div
+                            $('#nickWrap').hide(); //we hide the nickname input div
+                        } else {
+                            $nickError.html('That username is already taken! Try Again!');
+                        }
+                    });
+                    $nickBox.val('');
                 });
-
 
                 //adding list of users
                 socket.on('usernames', function(data){
@@ -75,14 +80,13 @@
                 });
 
                 //functionality that send the message to the server
-                $messageForm.submit(function(event){
-                    event.preventDefault();
+                $messageForm.submit(function(e){
+                    e.preventDefault();
                     socket.emit('send message', $messageBox.val(), function(data){
-                        $chat.append('<span error="msg">' + data + "<br/>");;
+                        $chat.append('<span error="msg">' + data + "<br/>");
                     });
-                    //alert(document.getElementById('chat').scrollHeight);
                     $messageBox.val(''); //to clean the message box
-                    //to make the scrollbar go down when a new message appears
+				 //to make the scrollbar go down when a new message appears
                     var scrollbarPlace = document.getElementById('chat').scrollHeight;
                     document.getElementById("chat").scrollTop(scrollbarPlace);
                 });
@@ -98,52 +102,11 @@
                 socket.on('new message', function(data){
                    //time to display the message
                     displayMsg(data);
-
                 });
 
                 //function to display the messages (used in old messages and the new ones)
                 function displayMsg(data){
-                    if((data.nick + ': ' + data.msg).length < 26 && data.msg.length > 0){
-                        $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
-                    } else {
-                        var message = '<b>' + data.nick + ':</b>' + data.msg + '<br/>';
-
-                        while (message.length >= 26){
-                            message = message.trim();
-                            //first we slice the message in a 26 letter phrase
-                            var spcCheck = message.slice(0,26);
-                            //then we find the last "space" on it
-                            var spcPlace = spcCheck.lastIndexOf(" ");
-                            //then we cut it
-                            //$chat.append(spcCheck.length);
-                            if(spcPlace == -1){
-                                //if there is no space on the phrase
-                                //$chat.append("!");
-                                var smallMsg = spcCheck.slice(0,26);
-                                //var smallMsg = smallMsg + "</br>";
-                            } else {
-                                //then we cut it in that place
-                                var smallMsg = spcCheck.slice(0,spcPlace);
-                            }
-                            //we place it in the chat
-                            $chat.append(smallMsg + '</br>');
-                            //the message now starts were it was cuted
-                            if(spcPlace != -1){
-                                message = message.substr(spcPlace);
-                            } else {
-                                message = message.substr(26);
-                            }
-
-                        }
-                        //for last we place the remaing of the message
-                        if(message.length < 26 && data.msg.length > 0){
-                            //$chat.append("LASTMSG");
-                            //$chat.append('</br>');
-                            $chat.append(message);
-                        }
-
-                    }
-
+                    $chat.append('<span class="msg"><b>' + data.nick + ': </b>' + data.msg + "<br/>");
                 }
 
                 //time to display the private message
@@ -154,3 +117,5 @@
         </script>
     </body>
 </html>
+
+

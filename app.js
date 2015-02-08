@@ -79,12 +79,11 @@ io.sockets.on('connection', function(socket){
             callback(false); //this means that the username is in the array
         } else {
             callback(true);
-            socket.nickname = u; //storing the nickname in the socket
+            socket.nickname = data; //storing the nickname in the socket
             users[socket.nickname] = socket;
             updatesNicknames();
         }
     });
-
 
     function updatesNicknames(){
         io.sockets.emit('usernames', Object.keys(users));//for all the users update their list of nicknames
@@ -93,8 +92,7 @@ io.sockets.on('connection', function(socket){
     //send message function
     socket.on('send message', function(data, callback){
         var msg = data.trim(); //in case of empty spaces before de signal for private message and this becomes the message
-        //the first part of the if is the private messaging
-        if(msg.substr(0,3) === '/p '){ //if the user types "/p "
+        if(msg.substr(0,3) === '/p '){ //if the user types "/w "
             msg = msg.substr(3);
             var ind = msg.indexOf(' ');
             if(ind !== -1){
@@ -112,7 +110,6 @@ io.sockets.on('connection', function(socket){
             }
 
         } else {
-            //This second part is the normal chat
             //WARNING: private messages will not be store in DB
             var newMsg = new Chat({msg: msg, nick: socket.nickname});
             newMsg.save(function(err){

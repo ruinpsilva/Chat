@@ -103,6 +103,7 @@ input{
 }
 
 #send-message{
+
     padding-left: 0px;
     size: 25px;
 }
@@ -117,11 +118,12 @@ input{
 }
 
 .whisper{
-    color: green;
+    color: yellow;
     font-style: italic;
 }
 
 #message{
+	border-radius: 4px;
     padding-left: 0px;
     size: 25px;
     height: 23px;
